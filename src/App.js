@@ -1,47 +1,52 @@
 import React from "react";
+import axios from "axios";
 
-// props.fav 과 {fav} 은 동일한 의미이다. => JS ES6의 기능
-function Food({ name }) {
-  // console.log(props);
-  return <h1>I love {name}</h1>;
-}
+class App extends React.Component {
+  // // React는 자동적으로 class의 render method를 실행한다.
+  // state = {
+  //   count: 0
+  // };
+  // add = () => {
+  //   // 아래와 같이 직접 변경하면 refresh가 안되기 때문에 변화하지 않는다.
+  //   // this.state.count += 1;
 
-const foodILike = [
-  {
-    id: 1,
-    name: "kimchi",
-    image: "",
-  },
-  {
-    id: 2,
-    name: "ramen",
-    imgae: "",
-  }
-];
+  //   // 외부 상태에 의존하는 코드는 좋은 코드가 아니다.
+  //   // this.setState({count: this.state.count + 1});
 
-function renderFood(dish) {
-  return <Food key={dish.id} name={dish.name}></Food>
-}
+  //   this.setState(current => ({count: current.count + 1}));
+  // };
+  // minus = () => {
+  //   this.setState(current => ({count: current.count - 1}));
+  // };
+  // // state 는 object
+  // render(){
+  //   return (
+  //   <div>
+  //     <h1>I am a class: {this.state.count}</h1>
+  //     <button onClick={this.add}>Add</button>
+  //     <button onClick={this.minus}>Minus</button>
+  //   </div>
+  //   );
+  // }
+  state = {
+    isLoading: true,
+    movies: []
 
-function App() {
-  return <div>
-    <h1>
-      Hello
-      </h1>
-      {/* name은 prop = property 이다. string 뿐만 아니라 boolean, array 등을 포함할 수 있다. prop은 function 와 component 간 매개변수이다. */}
-      <Food name="kimchi" />
-      <Food name="ramen" />
-      <Food name="samgiopsal" />
-      {/* 동적으로 만들기 */}
-      {/* Warning: Each child in a list should have a unique "key" prop. 발생 => key 값을 넣어 unique 부여 */}
-      {foodILike.map(
-        dish => (<Food key={dish.id} name={dish.name} />
-      ))}
-      {/*  */}
-      {console.log(foodILike.map(renderFood))}
-      {foodILike.map(renderFood)}
-    </div>;
-    
+  };
+  getMovies = async () => {
+    const { data: { data: { movies } } } = await axios.get("https://yts-proxy.now.sh/list_movies.json");
+    this.setState({ movies, isLoading: false });
+  };
+  componentDidMount() {
+    this.getMovies();
+  };
+  render() {
+    const { isLoading } = this.state;
+    return (
+
+      <div>{isLoading ? "isLoading..." : "We are ready"}</div>
+    );
+  };
 }
 
 export default App;
